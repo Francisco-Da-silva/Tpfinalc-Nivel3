@@ -37,24 +37,59 @@
                 <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
+            
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Nombre de la aplicación</a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">Acerca de</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contacto</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+ <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" runat="server" href="~/">Nombre de la aplicación</a>
+
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+            title="Alternar navegación" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link" runat="server" href="~/Home.aspx">Home</a>
+                </li>
+
+                <li class="nav-item" id="liRegistro" runat="server" visible="true">
+                    <a class="nav-link" runat="server" href="~/Registro.aspx">Registro</a>
+                </li>
+
+              
+
+                <!-- SOLO ADMIN -->
+                <li class="nav-item" id="liAdminProductos" runat="server" visible="false">
+                    <a class="nav-link" runat="server" href="~/AdminProductos.aspx">Admin Productos</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <!-- VISITANTE -->
+                <li class="nav-item" id="liLogin" runat="server" visible="true">
+                    <a class="nav-link" runat="server" href="~/Login.aspx">Login</a>
+                </li>
+
+                <!-- LOGUEADO -->
+                <li class="nav-item" id="liLogout" runat="server" visible="false">
+                    <a class="nav-link" runat="server" href="~/CerrarSeccion.aspx">Cerrar sesión</a>
+                </li>
+
+                 <li class="nav-item"   visible="false">
+                    <a class="nav-link" id="liMiPerfil" runat="server" href="~/Miperfil.aspx">MiPerfil</a>
+                 </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>

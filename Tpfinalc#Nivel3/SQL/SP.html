@@ -1,0 +1,306 @@
+﻿USE CATALOGO_WEB_DB
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ListarMarcas
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT Id, Descripcion
+    FROM MARCAS
+    ORDER BY Descripcion;
+END
+GO
+
+
+
+USE CATALOGO_WEB_DB
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ListarCategorias
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT Id, Descripcion
+    FROM CATEGORIAS
+    ORDER BY Descripcion;
+END
+GO
+
+
+USE CATALOGO_WEB_DB
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ListarArticulos
+    @Texto       VARCHAR(50) = '',
+    @IdMarca     INT = 0,
+    @IdCategoria INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT Id, Codigo, Nombre, Descripcion, IdMarca, IdCategoria, ImagenUrl, Precio
+    FROM ARTICULOS
+    WHERE (@Texto = '' OR Nombre LIKE '%' + @Texto + '%')
+      AND (@IdMarca = 0 OR IdMarca = @IdMarca)
+      AND (@IdCategoria = 0 OR IdCategoria = @IdCategoria)
+    ORDER BY Nombre;
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.SP_ArticuloPorId
+    @Id INT
+AS
+BEGIN
+    SELECT A.*,
+           M.Descripcion AS MarcaDescripcion,
+           C.Descripcion AS CategoriaDescripcion
+    FROM ARTICULOS A
+    INNER JOIN MARCAS M ON M.Id = A.IdMarca
+    INNER JOIN CATEGORIAS C ON C.Id = A.IdCategoria
+    WHERE A.Id = @Id;
+END
+
+
+USE CATALOGO_WEB_DB
+GO
+
+-- LISTAR (con filtros opcionales)
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_ListarArticulos
+    @Texto       VARCHAR(50) = '',
+    @IdMarca     INT = 0,
+    @IdCategoria INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT  A.Id, A.Codigo, A.Nombre, A.Descripcion, A.IdMarca, A.IdCategoria, A.ImagenUrl, A.Precio,
+            M.Descripcion AS MarcaDescripcion,
+            C.Descripcion AS CategoriaDescripcion
+    FROM ARTICULOS A
+    INNER JOIN MARCAS M ON M.Id = A.IdMarca
+    INNER JOIN CATEGORIAS C ON C.Id = A.IdCategoria
+    WHERE (@Texto = '' OR A.Nombre LIKE '%' + @Texto + '%' OR A.Descripcion LIKE '%' + @Texto + '%')
+      AND (@IdMarca = 0 OR A.IdMarca = @IdMarca)
+      AND (@IdCategoria = 0 OR A.IdCategoria = @IdCategoria)
+    ORDER BY A.Nombre;
+END
+GO
+
+-- OBTENER POR ID (para editar)
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_ArticuloPorId
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT Id, Codigo, Nombre, Descripcion, IdMarca, IdCategoria, ImagenUrl, Precio
+    FROM ARTICULOS
+    WHERE Id = @Id;
+END
+GO
+
+-- AGREGAR
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_AgregarArticulo
+    @Codigo     VARCHAR(50),
+    @Nombre     VARCHAR(50),
+    @Descripcion VARCHAR(150),
+    @IdMarca    INT,
+    @IdCategoria INT,
+    @ImagenUrl  VARCHAR(1000),
+    @Precio     MONEY
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO ARTICULOS (Codigo, Nombre, Descripcion, IdMarca, IdCategoria, ImagenUrl, Precio)
+    VALUES (@Codigo, @Nombre, @Descripcion, @IdMarca, @IdCategoria, @ImagenUrl, @Precio);
+END
+GO
+
+-- MODIFICAR
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_ModificarArticulo
+    @Id         INT,
+    @Codigo     VARCHAR(50),
+    @Nombre     VARCHAR(50),
+    @Descripcion VARCHAR(150),
+    @IdMarca    INT,
+    @IdCategoria INT,
+    @ImagenUrl  VARCHAR(1000),
+    @Precio     MONEY
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE ARTICULOS
+    SET Codigo=@Codigo, Nombre=@Nombre, Descripcion=@Descripcion,
+        IdMarca=@IdMarca, IdCategoria=@IdCategoria,
+        ImagenUrl=@ImagenUrl, Precio=@Precio
+    WHERE Id=@Id;
+END
+GO
+
+-- ELIMINAR
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_EliminarArticulo
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DELETE FROM ARTICULOS WHERE Id=@Id;
+END
+GO
+
+
+
+
+USE CATALOGO_WEB_DB
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_RegistrarUsuario
+    @Email VARCHAR(100),
+    @Pass  VARCHAR(20),
+    @Nombre VARCHAR(50) = NULL,
+    @Apellido VARCHAR(50) = NULL,
+    @UrlImagenPerfil VARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (SELECT 1 FROM USERS WHERE email = @Email)
+    BEGIN
+        RAISERROR('El email ya está registrado.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO USERS (email, pass, nombre, apellido, urlImagenPerfil, admin)
+    VALUES (@Email, @Pass, @Nombre, @Apellido, @UrlImagenPerfil, 0);
+END
+GO
+
+creo primero la primary key
+USE CATALOGO_WEB_DB
+GO
+
+ALTER TABLE dbo.USERS
+ADD CONSTRAINT PK_USERS PRIMARY KEY CLUSTERED (Id);
+GO
+
+
+USE CATALOGO_WEB_DB
+GO
+
+CREATE TABLE PasswordResetTokens(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    IdUser INT NOT NULL,
+    TokenHash VARBINARY(32) NOT NULL, -- SHA-256
+    Expira DATETIME NOT NULL,
+    Usado BIT NOT NULL DEFAULT 0,
+    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE()
+);
+GO
+
+CREATE INDEX IX_PasswordResetTokens_TokenHash ON PasswordResetTokens(TokenHash);
+GO
+
+ALTER TABLE PasswordResetTokens
+ADD CONSTRAINT FK_PasswordResetTokens_Users
+FOREIGN KEY (IdUser) REFERENCES USERS(Id);
+GO
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SP_Reset_CreateToken
+    @Email VARCHAR(100),
+    @TokenHash VARBINARY(32),
+    @Expira DATETIME
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IdUser INT;
+    SELECT @IdUser = Id FROM USERS WHERE email = @Email;
+
+    IF @IdUser IS NULL
+    BEGIN
+        RAISERROR('No existe un usuario con ese email.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO PasswordResetTokens (IdUser, TokenHash, Expira, Usado)
+    VALUES (@IdUser, @TokenHash, @Expira, 0);
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.SP_Reset_ValidarToken
+    @TokenHash VARBINARY(32)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP 1 Id, IdUser, Expira, Usado
+    FROM PasswordResetTokens
+    WHERE TokenHash = @TokenHash
+      AND Usado = 0
+      AND Expira > GETDATE()
+    ORDER BY Id DESC;
+END
+GO
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SP_Reset_Confirmar
+    @TokenHash VARBINARY(32),
+    @NuevaPass VARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @TokenId INT, @IdUser INT;
+
+    SELECT TOP 1 @TokenId = Id, @IdUser = IdUser
+    FROM PasswordResetTokens
+    WHERE TokenHash = @TokenHash
+      AND Usado = 0
+      AND Expira > GETDATE()
+    ORDER BY Id DESC;
+
+    IF @TokenId IS NULL
+    BEGIN
+        RAISERROR('Token inválido o vencido.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE USERS
+    SET pass = @NuevaPass
+    WHERE Id = @IdUser;
+
+    UPDATE PasswordResetTokens
+    SET Usado = 1
+    WHERE Id = @TokenId;
+END
+GO
+
+
+
+
+CREATE OR ALTER PROCEDURE SP_ActualizarPerfil
+(
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @UrlImagenPerfil VARCHAR(500)
+)
+AS
+BEGIN
+    UPDATE USERS
+    SET
+        nombre = @Nombre,
+        apellido = @Apellido,
+        urlImagenPerfil = @UrlImagenPerfil
+    WHERE Id = @Id
+END
+GO
