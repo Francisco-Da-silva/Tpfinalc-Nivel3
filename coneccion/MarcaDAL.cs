@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -12,32 +13,39 @@ namespace conexion
     public class MarcaDAL
     {
         private string connectionString =
-             "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
+            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
 
         public List<Marca> Listar()
         {
-            List<Marca> lista = new List<Marca>();
-
-            string query = "SELECT Id, Descripcion FROM MARCAS ORDER BY Descripcion";
-
-            using (SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
+            try
             {
-                con.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                List<Marca> lista = new List<Marca>();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand("dbo.SP_ListarMarcas", con))
                 {
-                    while (dr.Read())
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    con.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-                        lista.Add(new Marca
+                        while (dr.Read())
                         {
-                            Id = (int)dr["Id"],
-                            Descripcion = dr["Descripcion"]?.ToString()
-                        });
+                            lista.Add(new Marca
+                            {
+                                Id = (int)dr["Id"],
+                                Descripcion = dr["Descripcion"]?.ToString()
+                            });
+                        }
                     }
                 }
-            }
 
-            return lista;
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en MarcaDAL.Listar (SP_ListarMarcas)", ex);
+            }
         }
     }
 }

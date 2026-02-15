@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,32 +12,39 @@ namespace conexion
     public class CategoriaDAL
     {
         private string connectionString =
-"Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
+            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
 
         public List<Categoria> Listar()
         {
-            List<Categoria> lista = new List<Categoria>();
-
-            string query = "SELECT Id, Descripcion FROM CATEGORIAS ORDER BY Descripcion";
-
-            using (SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
+            try
             {
-                con.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                List<Categoria> lista = new List<Categoria>();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand("dbo.SP_ListarCategorias", con))
                 {
-                    while (dr.Read())
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    con.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-                        lista.Add(new Categoria
+                        while (dr.Read())
                         {
-                            Id = (int)dr["Id"],
-                            Descripcion = dr["Descripcion"]?.ToString()
-                        });
+                            lista.Add(new Categoria
+                            {
+                                Id = (int)dr["Id"],
+                                Descripcion = dr["Descripcion"]?.ToString()
+                            });
+                        }
                     }
                 }
-            }
 
-            return lista;
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en CategoriaDAL.Listar (SP_ListarCategorias)", ex);
+            }
         }
     }
 }

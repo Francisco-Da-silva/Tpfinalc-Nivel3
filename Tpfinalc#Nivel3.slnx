@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Articulos/Dominio.csproj" Id="2c0e8930-00c7-47f9-9427-de1098f8e541" />
   <Project Path="coneccion/conexion.csproj" Id="1742c0a3-db57-4341-8b35-b6efcfed87f7" />
+  <Project Path="Service/Service.csproj" Id="53365e64-7310-4fc7-a307-617e71cc83f5" />
   <Project Path="Tpfinalc#Nivel3/Tpfinalc#Nivel3.csproj" Id="018bbb4d-1589-4d8a-9136-592e7287f6db" />
 </Solution>
