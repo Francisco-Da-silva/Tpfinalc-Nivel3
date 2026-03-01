@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 
 namespace coneccion
 {
-    public static class Conexion
-    {
-        public static string Cadena =>
-            ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+ 
+        public static class Conexion
+        {
+            public static string Cadena
+            {
+                get
+                {
+                    return ConfigurationManager
+                        .ConnectionStrings["DB"]
+                        .ConnectionString;
+                }
+            }
+        }
     }
-}

@@ -1,4 +1,5 @@
-﻿using Dominio;
+﻿using coneccion;
+using Dominio;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,16 +13,14 @@ namespace conexion
 
     public class MarcaDAL
     {
-        private string connectionString =
-            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
-
+        
         public List<Marca> Listar()
         {
             try
             {
                 List<Marca> lista = new List<Marca>();
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_ListarMarcas", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;

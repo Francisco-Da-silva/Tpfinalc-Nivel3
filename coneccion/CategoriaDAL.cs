@@ -1,4 +1,5 @@
-﻿using Dominio;
+﻿using coneccion;
+using Dominio;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,16 +12,13 @@ namespace conexion
 {
     public class CategoriaDAL
     {
-        private string connectionString =
-            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
-
         public List<Categoria> Listar()
         {
             try
             {
                 List<Categoria> lista = new List<Categoria>();
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_ListarCategorias", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -32,7 +30,7 @@ namespace conexion
                         {
                             lista.Add(new Categoria
                             {
-                                Id = (int)dr["Id"],
+                                Id = dr["Id"] == DBNull.Value ? 0 : (int)dr["Id"],
                                 Descripcion = dr["Descripcion"]?.ToString()
                             });
                         }

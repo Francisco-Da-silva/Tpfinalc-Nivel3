@@ -1,4 +1,5 @@
-﻿using Dominio;
+﻿using coneccion;
+using Dominio;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,15 +12,14 @@ using System.Threading.Tasks;
     {
         public class FavoritoDAL
         {
-            private string connectionString =
-                "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
+            
 
             public void Agregar(int idUser, int idArticulo)
             {
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    using (SqlCommand cmd = new SqlCommand(
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand(
                         "INSERT INTO FAVORITOS (IdUser, IdArticulo) VALUES (@u, @a)", con))
                     {
                         cmd.Parameters.Add("@u", SqlDbType.Int).Value = idUser;
@@ -47,8 +47,8 @@ using System.Threading.Tasks;
                     INNER JOIN FAVORITOS F ON A.Id = F.IdArticulo
                     WHERE F.IdUser = @idUser";
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         cmd.Parameters.Add("@idUser", SqlDbType.Int).Value = idUser;
 
@@ -80,8 +80,8 @@ using System.Threading.Tasks;
             {
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    using (SqlCommand cmd = new SqlCommand(
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand(
                         "DELETE FROM FAVORITOS WHERE IdUser=@u AND IdArticulo=@a", con))
                     {
                         cmd.Parameters.Add("@u", SqlDbType.Int).Value = idUser;

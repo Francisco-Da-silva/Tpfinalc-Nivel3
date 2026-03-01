@@ -1,4 +1,5 @@
-﻿using Dominio;
+﻿using coneccion;
+using Dominio;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,9 +16,6 @@ namespace conexion
 
     public class ArticuloDAL
     {
-        private string connectionString =
-            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
-
         public List<Articulo> Listar(string texto, string idMarcaStr, string idCategoriaStr)
         {
             try
@@ -27,7 +25,7 @@ namespace conexion
                 int idMarca = int.TryParse(idMarcaStr, out var m) ? m : 0;
                 int idCategoria = int.TryParse(idCategoriaStr, out var c) ? c : 0;
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_ListarArticulos", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -65,45 +63,43 @@ namespace conexion
         }
 
         public Articulo ObtenerPorId(int id)
-{
-    try
-    {
-        using (SqlConnection con = new SqlConnection(connectionString))
-        using (SqlCommand cmd = new SqlCommand("dbo.SP_ArticuloPorId", con))
         {
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-
-            con.Open();
-            using (SqlDataReader dr = cmd.ExecuteReader())
+            try
             {
-                if (!dr.Read())
-                    return null;
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand("dbo.SP_ArticuloPorId", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+
+                    con.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (!dr.Read())
+                            return null;
+
                         return new Articulo
                         {
                             Id = id,
-                            Codigo = dr["Codigo"].ToString(),
-                            Nombre = dr["Nombre"].ToString(),
-                            Descripcion = dr["Descripcion"].ToString(),
-                            ImagenUrl = dr["ImagenUrl"].ToString(),
-                            Precio = Convert.ToDecimal(dr["Precio"]),
+                            Codigo = dr["Codigo"]?.ToString(),
+                            Nombre = dr["Nombre"]?.ToString(),
+                            Descripcion = dr["Descripcion"]?.ToString(),
+                            ImagenUrl = dr["ImagenUrl"]?.ToString(),
+                            Precio = dr["Precio"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["Precio"]),
                             IdMarca = dr["IdMarca"] == DBNull.Value ? 0 : (int)dr["IdMarca"],
                             IdCategoria = dr["IdCategoria"] == DBNull.Value ? 0 : (int)dr["IdCategoria"],
 
-                            // textos para mostrar
-                            MarcaDescripcion = dr["MarcaDescripcion"].ToString(),
-                            CategoriaDescripcion = dr["CategoriaDescripcion"].ToString()
+                            MarcaDescripcion = dr["MarcaDescripcion"]?.ToString(),
+                            CategoriaDescripcion = dr["CategoriaDescripcion"]?.ToString()
                         };
-
                     }
                 }
-    }
-    catch (Exception ex)
-    {
-        throw new Exception("Error en ArticuloDAL.ObtenerPorId", ex);
-    }
-}
-
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en ArticuloDAL.ObtenerPorId", ex);
+            }
+        }
 
         public List<Articulo> AdminListar(string texto, string idMarcaStr, string idCategoriaStr)
         {
@@ -113,7 +109,7 @@ namespace conexion
                 int idMarca = int.TryParse(idMarcaStr, out var m) ? m : 0;
                 int idCategoria = int.TryParse(idCategoriaStr, out var c) ? c : 0;
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Admin_ListarArticulos", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -129,15 +125,15 @@ namespace conexion
                             lista.Add(new Articulo
                             {
                                 Id = (int)dr["Id"],
-                                Codigo = dr["Codigo"].ToString(),
-                                Nombre = dr["Nombre"].ToString(),
-                                Descripcion = dr["Descripcion"].ToString(),
-                                IdMarca = (int)dr["IdMarca"],
-                                IdCategoria = (int)dr["IdCategoria"],
-                                ImagenUrl = dr["ImagenUrl"].ToString(),
-                                Precio = Convert.ToDecimal(dr["Precio"]),
-                                MarcaDescripcion = dr["MarcaDescripcion"].ToString(),
-                                CategoriaDescripcion = dr["CategoriaDescripcion"].ToString()
+                                Codigo = dr["Codigo"]?.ToString(),
+                                Nombre = dr["Nombre"]?.ToString(),
+                                Descripcion = dr["Descripcion"]?.ToString(),
+                                IdMarca = dr["IdMarca"] == DBNull.Value ? 0 : (int)dr["IdMarca"],
+                                IdCategoria = dr["IdCategoria"] == DBNull.Value ? 0 : (int)dr["IdCategoria"],
+                                ImagenUrl = dr["ImagenUrl"]?.ToString(),
+                                Precio = dr["Precio"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["Precio"]),
+                                MarcaDescripcion = dr["MarcaDescripcion"]?.ToString(),
+                                CategoriaDescripcion = dr["CategoriaDescripcion"]?.ToString()
                             });
                         }
                     }
@@ -155,7 +151,7 @@ namespace conexion
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Admin_ArticuloPorId", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -168,14 +164,14 @@ namespace conexion
 
                         return new Articulo
                         {
-                            Id = (int)dr["Id"],
-                            Codigo = dr["Codigo"].ToString(),
-                            Nombre = dr["Nombre"].ToString(),
-                            Descripcion = dr["Descripcion"].ToString(),
-                            IdMarca = (int)dr["IdMarca"],
-                            IdCategoria = (int)dr["IdCategoria"],
-                            ImagenUrl = dr["ImagenUrl"].ToString(),
-                            Precio = Convert.ToDecimal(dr["Precio"])
+                            Id = dr["Id"] == DBNull.Value ? 0 : (int)dr["Id"],
+                            Codigo = dr["Codigo"]?.ToString(),
+                            Nombre = dr["Nombre"]?.ToString(),
+                            Descripcion = dr["Descripcion"]?.ToString(),
+                            IdMarca = dr["IdMarca"] == DBNull.Value ? 0 : (int)dr["IdMarca"],
+                            IdCategoria = dr["IdCategoria"] == DBNull.Value ? 0 : (int)dr["IdCategoria"],
+                            ImagenUrl = dr["ImagenUrl"]?.ToString(),
+                            Precio = dr["Precio"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["Precio"])
                         };
                     }
                 }
@@ -190,7 +186,7 @@ namespace conexion
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Admin_AgregarArticulo", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -217,7 +213,7 @@ namespace conexion
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Admin_ModificarArticulo", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -245,7 +241,7 @@ namespace conexion
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Admin_EliminarArticulo", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -260,7 +256,5 @@ namespace conexion
                 throw new Exception("Error en ArticuloDAL.AdminEliminar", ex);
             }
         }
- 
-
     }
 }

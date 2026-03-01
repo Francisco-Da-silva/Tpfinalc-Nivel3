@@ -10,19 +10,14 @@ namespace conexion
 {
     public class UsuarioDAL
     {
-
-
-        private readonly string connectionString =
-            "Server=.\\SQLEXPRESS;Database=CATALOGO_WEB_DB;Trusted_Connection=True;TrustServerCertificate=True";
-
         public Usuario Login(string email, string passHash)
         {
             using (SqlConnection cn = new SqlConnection(Conexion.Cadena))
             using (SqlCommand cmd = new SqlCommand(
                 "SELECT Id, email, nombre, apellido, urlImagenPerfil, admin FROM dbo.USERS WHERE email=@Email AND pass=@Pass", cn))
             {
-                cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@Pass", passHash);
+                cmd.Parameters.Add("@Email", SqlDbType.VarChar, 100).Value = (email ?? "").Trim();
+                cmd.Parameters.Add("@Pass", SqlDbType.VarChar, 200).Value = (passHash ?? "").Trim(); // ajustá el tamaño según tu DB
 
                 cn.Open();
                 using (var dr = cmd.ExecuteReader())
@@ -31,27 +26,28 @@ namespace conexion
 
                     return new Usuario
                     {
-                        Id = (int)dr["Id"],
-                        Email = dr["email"].ToString(),
+                        Id = dr["Id"] == DBNull.Value ? 0 : (int)dr["Id"],
+                        Email = dr["email"]?.ToString(),
                         Nombre = dr["nombre"] as string,
                         Apellido = dr["apellido"] as string,
                         UrlImagenPerfil = dr["urlImagenPerfil"] as string,
-                        Admin = (bool)dr["admin"]
+                        Admin = dr["admin"] != DBNull.Value && (bool)dr["admin"]
                     };
                 }
             }
         }
+
         public void Registrar(Usuario u)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_RegistrarUsuario", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@Email", SqlDbType.VarChar, 100).Value = (u.Email ?? "").Trim();
-                    cmd.Parameters.Add("@Pass", SqlDbType.VarChar, 20).Value = (u.Pass ?? "").Trim();
+                    cmd.Parameters.Add("@Pass", SqlDbType.VarChar, 200).Value = (u.Pass ?? "").Trim(); // ajustá tamaño
 
                     cmd.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value =
                         string.IsNullOrWhiteSpace(u.Nombre) ? (object)DBNull.Value : u.Nombre.Trim();
@@ -72,24 +68,25 @@ namespace conexion
             }
         }
 
-
-
         public void ActualizarPerfil(Usuario user)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                using (SqlCommand cmd = new SqlCommand("SP_ActualizarPerfil", con))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand("dbo.SP_ActualizarPerfil", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = user.Id;
+
                     cmd.Parameters.Add("@Nombre", SqlDbType.VarChar, 50).Value =
-                        (object)user.Nombre ?? DBNull.Value;
+                        string.IsNullOrWhiteSpace(user.Nombre) ? (object)DBNull.Value : user.Nombre.Trim();
+
                     cmd.Parameters.Add("@Apellido", SqlDbType.VarChar, 50).Value =
-                        (object)user.Apellido ?? DBNull.Value;
+                        string.IsNullOrWhiteSpace(user.Apellido) ? (object)DBNull.Value : user.Apellido.Trim();
+
                     cmd.Parameters.Add("@UrlImagenPerfil", SqlDbType.VarChar, 500).Value =
-                        (object)user.UrlImagenPerfil ?? DBNull.Value;
+                        string.IsNullOrWhiteSpace(user.UrlImagenPerfil) ? (object)DBNull.Value : user.UrlImagenPerfil.Trim();
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -100,18 +97,17 @@ namespace conexion
                 throw new Exception("Error al actualizar perfil", ex);
             }
         }
+
         public string CrearTokenReset(string email, int minutosVigencia)
         {
             try
             {
-                // Generar bytes aleatorios seguros
                 byte[] bytes = new byte[32];
                 using (var rng = RandomNumberGenerator.Create())
                 {
                     rng.GetBytes(bytes);
                 }
 
-                // Token URL-safe
                 string token = Convert.ToBase64String(bytes)
                     .Replace("+", "-")
                     .Replace("/", "_")
@@ -120,7 +116,7 @@ namespace conexion
                 byte[] tokenHash = Sha256(token);
                 DateTime expira = DateTime.Now.AddMinutes(minutosVigencia);
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Reset_CreateToken", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -153,7 +149,7 @@ namespace conexion
 
                 byte[] tokenHash = Sha256(token);
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Reset_ValidarToken", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -183,7 +179,7 @@ namespace conexion
 
                 byte[] tokenHash = Sha256(token);
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
                 using (SqlCommand cmd = new SqlCommand("dbo.SP_Reset_Confirmar", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -191,7 +187,7 @@ namespace conexion
                     var pHash = cmd.Parameters.Add("@TokenHash", SqlDbType.VarBinary, 32);
                     pHash.Value = tokenHash;
 
-                    cmd.Parameters.Add("@NuevaPass", SqlDbType.VarChar, 20).Value = (nuevaPass ?? "").Trim();
+                    cmd.Parameters.Add("@NuevaPass", SqlDbType.VarChar, 200).Value = (nuevaPass ?? "").Trim(); // ajustá tamaño
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -203,27 +199,24 @@ namespace conexion
             }
         }
 
-        private static byte[] Sha256(string input)
-        {
-            using (var sha = SHA256.Create())
-                return sha.ComputeHash(Encoding.UTF8.GetBytes(input));
-        }
-
-
         public bool CambiarPasswordPorEmail(string email, string passHash)
         {
             using (SqlConnection cn = new SqlConnection(Conexion.Cadena))
             using (SqlCommand cmd = new SqlCommand(
                 "UPDATE dbo.USERS SET pass = @Pass WHERE email = @Email", cn))
             {
-                cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@Pass", passHash);
+                cmd.Parameters.Add("@Email", SqlDbType.VarChar, 100).Value = (email ?? "").Trim();
+                cmd.Parameters.Add("@Pass", SqlDbType.VarChar, 200).Value = (passHash ?? "").Trim(); // ajustá tamaño
 
                 cn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
 
-
+        private static byte[] Sha256(string input)
+        {
+            using (var sha = SHA256.Create())
+                return sha.ComputeHash(Encoding.UTF8.GetBytes(input ?? ""));
+        }
     }
 }
