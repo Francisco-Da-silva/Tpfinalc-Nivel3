@@ -27,7 +27,6 @@
                     <div class="mt-3 text-center">
                         <asp:Label ID="lblMsg" runat="server" />
                     </div>
-                    <asp:HyperLink ID="lnkManual" runat="server" Visible="false" CssClass="btn btn-warning mt-2" />
 
                     <div class="mt-3 text-center">
                         <asp:HyperLink ID="lnkDebug" runat="server" Visible="false" />

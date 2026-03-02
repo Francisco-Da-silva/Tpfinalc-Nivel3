@@ -9,8 +9,8 @@ namespace Tpfinalc_Nivel3
 {
     public partial class CerrarSeccion : System.Web.UI.Page
     {
-   
-       protected void Page_Load(object sender, EventArgs e)
+
+        protected void Page_Load(object sender, EventArgs e)
         {
             try
             {

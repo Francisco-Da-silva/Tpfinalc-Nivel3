@@ -1,4 +1,5 @@
 ﻿using conexion;
+using conexion.conexion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace Tpfinalc_Nivel3
                 Context.ApplicationInstance.CompleteRequest();
             }
             catch (Exception ex)
-            { 
+            {
                 Session["Error"] = ex.Message;
                 Response.Redirect("~/Error.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();

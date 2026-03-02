@@ -1,4 +1,5 @@
 ﻿using conexion;
+using conexion.conexion;
 using Dominio;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace Tpfinalc_Nivel3
             }
             catch (Exception ex)
             {
-               
+
                 lblMsg.Text = ex.Message;
 
 

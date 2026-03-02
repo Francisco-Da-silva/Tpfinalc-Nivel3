@@ -1,4 +1,5 @@
 ﻿using conexion;
+using conexion.conexion;
 using Service;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,14 @@ namespace Tpfinalc_Nivel3
 {
     public partial class RecuperarContraseña : System.Web.UI.Page
     {
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
 
 
         }
 
-
-
         protected void btnEnviar_Click(object sender, EventArgs e)
         {
-
-
-
-
             try
             {
                 string email = (txtEmail.Text ?? "").Trim();
@@ -74,18 +67,12 @@ namespace Tpfinalc_Nivel3
                     lnkDebug.Visible = false;
                 }
             }
-            catch (Exception exMail)
+            catch (Exception ex)
             {
-
-                //Session["Error"] = ex.ToString();
-                //Session["Error"] = ex.Message;
-                //Response.Redirect("~/Error.aspx", false);
-                //Context.ApplicationInstance.CompleteRequest();
-                lblMsg.CssClass = "text-danger";
-                lblMsg.Text = exMail.Message;      // ahora va a decir "Error SMTP: Authentication failed..." etc.
-                Session["Error"] = exMail.ToString();
+                Session["Error"] = ex.Message;
+                Response.Redirect("~/Error.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
         }
     }
 }
-   

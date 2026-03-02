@@ -30,9 +30,9 @@ namespace Tpfinalc_Nivel3
                 Response.Redirect("Error.aspx", false);
             }
         }
-    
 
-    private void CargarDetalle(int id)
+
+        private void CargarDetalle(int id)
         {
             try
             {
@@ -61,32 +61,6 @@ namespace Tpfinalc_Nivel3
             }
         }
 
-        protected void btnFavorito_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var usuario = (Usuario)Session["Usuario"];
-
-                if (usuario == null)
-                {
-                    Response.Redirect("~/Login.aspx");
-                    return;
-                }
-
-                int idArticulo = int.Parse(Request.QueryString["id"]);
-
-                FavoritoDAL dal = new FavoritoDAL();
-                dal.Agregar(usuario.Id, idArticulo);
-
-                lblMsg.Text = "Agregado a favoritos!";
-            }
-            catch (Exception ex)
-            {
-                Session["Error"] = ex.ToString();
-                Response.Redirect("~/Error.aspx");
-            }
-        }
-
     }
+}
 
-    }

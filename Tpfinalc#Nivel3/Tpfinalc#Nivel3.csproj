@@ -209,7 +209,6 @@
     <Content Include="AdminProductos.aspx" />
     <Content Include="AltaProducto.aspx" />
     <Content Include="CerrarSeccion.aspx" />
-    <Content Include="Detalle.aspx" />
     <Content Include="Favoritos.aspx" />
     <Content Include="Home.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -234,6 +233,7 @@
     <Content Include="Login.aspx" />
     <Content Include="MiPerfil.aspx" />
     <Content Include="Registro.aspx" />
+    <Content Include="Login.aspx" />
     <Content Include="ResetManual.aspx" />
     <Content Include="ResetPassword.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -267,6 +267,7 @@
     <Content Include="Error.aspx" />
     <Content Include="RecuperarContraseña.aspx" />
     <Content Include="ApplicationInsights.config" />
+    <Content Include="Detalle.aspx" />
     <None Include="Properties\PublishProfiles\catalogoweb - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
@@ -324,13 +325,6 @@
     </Compile>
     <Compile Include="CerrarSeccion.aspx.designer.cs">
       <DependentUpon>CerrarSeccion.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Detalle.aspx.cs">
-      <DependentUpon>Detalle.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Detalle.aspx.designer.cs">
-      <DependentUpon>Detalle.aspx</DependentUpon>
     </Compile>
     <Compile Include="Favoritos.aspx.cs">
       <DependentUpon>Favoritos.aspx</DependentUpon>
@@ -420,6 +414,13 @@
     </Compile>
     <Compile Include="RecuperarContraseña.aspx.designer.cs">
       <DependentUpon>RecuperarContraseña.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Detalle.aspx.cs">
+      <DependentUpon>Detalle.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Detalle.aspx.designer.cs">
+      <DependentUpon>Detalle.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

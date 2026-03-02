@@ -1,4 +1,5 @@
 ﻿using conexion;
+using conexion.conexion;
 using System;
 using System.Configuration;
 using System.Security.Cryptography;

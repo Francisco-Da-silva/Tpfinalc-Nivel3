@@ -19,15 +19,10 @@
                 <p><strong>Código:</strong> <asp:Label ID="lblCodigo" runat="server" /></p>
                 <p><strong>Marca:</strong> <asp:Label ID="lblMarca" runat="server" /></p>
                 <p><strong>Categoría:</strong> <asp:Label ID="lblCategoria" runat="server" /></p>
-                <p><strong>Categoría:</strong> <asp:Label ID="lblDescripcion" runat="server" /></p>
 
-               <asp:Button ID="btnFavorito" runat="server"
-                   Text="Agregar a Favoritos"
-                     CssClass="btn btn-warning mt-3"
-                     OnClick="btnFavorito_Click" />
-
-                 <asp:Label ID="lblMsg" runat="server"
-                     CssClass="text-success mt-2 d-block"></asp:Label>
+                <p class="mt-3">
+                    <asp:Label ID="lblDescripcion" runat="server" />
+                </p>
 
                 <a href="Home.aspx" class="btn btn-secondary mt-3">Volver</a>
             </div>
