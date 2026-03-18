@@ -14,9 +14,7 @@ namespace coneccion
             {
                 get
                 {
-                    return ConfigurationManager
-                        .ConnectionStrings["DB"]
-                        .ConnectionString;
+                    return ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
                 }
             }
         }

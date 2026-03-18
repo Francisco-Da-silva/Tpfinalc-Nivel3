@@ -43,7 +43,7 @@ namespace conexion
             }
             catch (Exception ex)
             {
-                throw new Exception("Error en MarcaDAL.Listar (SP_ListarMarcas)", ex);
+                throw new Exception("Error en MarcaDAL.Listar (SP_ListarMarcas): " + ex.Message, ex);
             }
         }
     }

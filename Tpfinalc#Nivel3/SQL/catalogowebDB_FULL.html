@@ -1,0 +1,200 @@
+﻿/* =========================================================
+   BASE: CATALOGOWEBDB
+   SCRIPT COMPLETO
+   ========================================================= */
+
+
+/* =========================
+   TABLAS
+   ========================= */
+
+CREATE TABLE dbo.MARCAS (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Descripcion VARCHAR(50)
+);
+
+CREATE TABLE dbo.CATEGORIAS (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Descripcion VARCHAR(50)
+);
+
+CREATE TABLE dbo.ARTICULOS (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(50),
+    Nombre VARCHAR(50),
+    Descripcion VARCHAR(150),
+    IdMarca INT,
+    IdCategoria INT,
+    ImagenUrl VARCHAR(1000),
+    Precio MONEY
+);
+
+CREATE TABLE dbo.USERS (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    pass VARCHAR(20) NOT NULL,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    urlImagenPerfil VARCHAR(500),
+    admin BIT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE dbo.FAVORITOS (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    IdUser INT NOT NULL,
+    IdArticulo INT NOT NULL,
+    FechaAlta DATETIME NOT NULL DEFAULT(GETDATE())
+);
+
+
+/* =========================
+   RELACIONES E INDICES
+   ========================= */
+
+ALTER TABLE dbo.FAVORITOS
+ADD CONSTRAINT UQ_FAVORITOS UNIQUE (IdUser, IdArticulo);
+
+ALTER TABLE dbo.FAVORITOS
+ADD CONSTRAINT FK_FAVORITOS_USERS
+FOREIGN KEY (IdUser) REFERENCES dbo.USERS(Id);
+
+ALTER TABLE dbo.FAVORITOS
+ADD CONSTRAINT FK_FAVORITOS_ARTICULOS
+FOREIGN KEY (IdArticulo) REFERENCES dbo.ARTICULOS(Id);
+
+CREATE INDEX IX_FAVORITOS_IdUser
+ON dbo.FAVORITOS(IdUser);
+
+
+/* =========================
+   PASSWORD RESET
+   ========================= */
+
+CREATE TABLE dbo.PasswordResetTokens(
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    IdUser INT NOT NULL,
+    TokenHash VARBINARY(32) NOT NULL,
+    Expira DATETIME NOT NULL,
+    Usado BIT NOT NULL DEFAULT 0,
+    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+CREATE INDEX IX_PasswordResetTokens_TokenHash
+ON dbo.PasswordResetTokens(TokenHash);
+
+ALTER TABLE dbo.PasswordResetTokens
+ADD CONSTRAINT FK_PasswordResetTokens_Users
+FOREIGN KEY (IdUser) REFERENCES dbo.USERS(Id);
+
+
+/* =========================
+   DATOS INICIALES
+   ========================= */
+
+INSERT INTO dbo.MARCAS (Descripcion) VALUES
+('Samsung'), ('Apple'), ('Sony'), ('Huawei'), ('Motorola');
+
+INSERT INTO dbo.CATEGORIAS (Descripcion) VALUES
+('Celulares'), ('Televisores'), ('Media'), ('Audio');
+
+INSERT INTO dbo.ARTICULOS
+(Codigo, Nombre, Descripcion, IdMarca, IdCategoria, ImagenUrl, Precio)
+VALUES
+('S01', 'Galaxy S10', 'Una canoa cara', 1, 1, 'https://images.samsung.com/is/image/samsung/assets/ar/p6_gro2/p6_initial_mktpd/smartphones/galaxy-s10/specs/galaxy-s10-plus_specs_design_colors_prism_black.jpg?$163_346_PNG$', 69999),
+('M03', 'Moto G Play 7ma Gen', 'Ya siete de estos?', 5, 1, 'https://www.motorola.cl/arquivos/moto-g7-play-img-product.png?v=636862863804700000', 15699),
+('S99', 'Play 4', 'Ya no se cuantas versiones hay', 3, 3, 'sin_imagen_para_que_de_error....muejeje', 35000),
+('S56', 'Bravia 55', 'Alta tele', 3, 2, 'https://intercompras.com/product_thumb_keepratio_2.php?img=images/product/SONY_KDL-55W950A.jpg&w=650&h=450', 49500),
+('A23', 'Apple TV', 'lindo loro', 2, 3, 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/rfb-apple-tv-4k?wid=1144&hei=1144&fmt=jpeg&qlt=80&.v=1513897159574', 7850);
+
+INSERT INTO dbo.USERS (email, pass, admin)
+VALUES ('admin@admin.com', 'admin', 1);
+
+INSERT INTO dbo.USERS (email, pass, admin)
+VALUES ('user@user.com', 'user', 0);
+
+
+/* =========================
+   STORED PROCEDURES
+   ========================= */
+
+GO
+CREATE OR ALTER PROCEDURE dbo.SP_ListarMarcas
+AS
+BEGIN
+    SELECT Id, Descripcion FROM dbo.MARCAS ORDER BY Descripcion;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ListarCategorias
+AS
+BEGIN
+    SELECT Id, Descripcion FROM dbo.CATEGORIAS ORDER BY Descripcion;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ListarArticulos
+    @Texto VARCHAR(50) = '',
+    @IdMarca INT = 0,
+    @IdCategoria INT = 0
+AS
+BEGIN
+    SELECT * FROM dbo.ARTICULOS
+    WHERE (@Texto = '' OR Nombre LIKE '%' + @Texto + '%')
+      AND (@IdMarca = 0 OR IdMarca = @IdMarca)
+      AND (@IdCategoria = 0 OR IdCategoria = @IdCategoria);
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ArticuloPorId
+    @Id INT
+AS
+BEGIN
+    SELECT A.*, M.Descripcion AS MarcaDescripcion, C.Descripcion AS CategoriaDescripcion
+    FROM dbo.ARTICULOS A
+    JOIN dbo.MARCAS M ON M.Id = A.IdMarca
+    JOIN dbo.CATEGORIAS C ON C.Id = A.IdCategoria
+    WHERE A.Id = @Id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_AgregarArticulo
+AS
+BEGIN
+    PRINT 'Agregar artículo';
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_ModificarArticulo
+AS
+BEGIN
+    PRINT 'Modificar artículo';
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_Admin_EliminarArticulo
+AS
+BEGIN
+    PRINT 'Eliminar artículo';
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_RegistrarUsuario
+    @Email VARCHAR(100),
+    @Pass VARCHAR(20)
+AS
+BEGIN
+    INSERT INTO dbo.USERS(email, pass) VALUES(@Email, @Pass);
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SP_ActualizarPerfil
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50)
+AS
+BEGIN
+    UPDATE dbo.USERS
+    SET nombre = @Nombre, apellido = @Apellido
+    WHERE Id = @Id;
+END
+GO
