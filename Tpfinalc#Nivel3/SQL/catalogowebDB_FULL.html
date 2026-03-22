@@ -198,3 +198,79 @@ BEGIN
     WHERE Id = @Id;
 END
 GO
+
+
+
+ultima actualizacion para contraseñas seguras:
+/* 1) Agrandar el campo pass para guardar hashes cómodamente */
+ALTER TABLE dbo.USERS
+ALTER COLUMN pass VARCHAR(200) NOT NULL;
+GO
+
+/* 2) Corregir los usuarios ya cargados para que tengan hash y no texto plano */
+UPDATE dbo.USERS
+SET pass = 'jGl25bVBBBW96Qi9Te4V37OdkA6R9C6W4qQ58Yq8jpk='
+WHERE email = 'admin@admin.com';
+GO
+
+UPDATE dbo.USERS
+SET pass = 'BPk6LjF3S7feAMc4A8mwVrh2anQ9l95i3WjZ43Y7FUM='
+WHERE email = 'user@user.com';
+GO
+
+/* 3) Asegurar que el SP de registro acepte hash */
+CREATE OR ALTER PROCEDURE dbo.SP_RegistrarUsuario
+    @Email VARCHAR(100),
+    @Pass VARCHAR(200),
+    @Nombre VARCHAR(50) = NULL,
+    @Apellido VARCHAR(50) = NULL,
+    @UrlImagenPerfil VARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (SELECT 1 FROM dbo.USERS WHERE email = @Email)
+    BEGIN
+        RAISERROR('El email ya está registrado.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO dbo.USERS (email, pass, nombre, apellido, urlImagenPerfil, admin)
+    VALUES (@Email, @Pass, @Nombre, @Apellido, @UrlImagenPerfil, 0);
+END
+GO
+
+/* 4) Asegurar que el reset guarde el nuevo hash */
+CREATE OR ALTER PROCEDURE dbo.SP_Reset_Confirmar
+    @TokenHash VARBINARY(32),
+    @NuevaPass VARCHAR(200)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @TokenId INT, @IdUser INT;
+
+    SELECT TOP 1
+        @TokenId = Id,
+        @IdUser = IdUser
+    FROM dbo.PasswordResetTokens
+    WHERE TokenHash = @TokenHash
+      AND Usado = 0
+      AND Expira > GETDATE()
+    ORDER BY Id DESC;
+
+    IF @TokenId IS NULL
+    BEGIN
+        RAISERROR('Token inválido o vencido.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE dbo.USERS
+    SET pass = @NuevaPass
+    WHERE Id = @IdUser;
+
+    UPDATE dbo.PasswordResetTokens
+    SET Usado = 1
+    WHERE Id = @TokenId;
+END
+GO

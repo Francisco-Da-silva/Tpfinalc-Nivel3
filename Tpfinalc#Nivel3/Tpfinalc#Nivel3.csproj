@@ -232,8 +232,8 @@
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
     <Content Include="MiPerfil.aspx" />
+    <Content Include="ProductoForm.aspx" />
     <Content Include="Registro.aspx" />
-    <Content Include="Login.aspx" />
     <Content Include="ResetManual.aspx" />
     <Content Include="ResetPassword.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -357,6 +357,13 @@
     </Compile>
     <Compile Include="MiPerfil.aspx.designer.cs">
       <DependentUpon>MiPerfil.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProductoForm.aspx.cs">
+      <DependentUpon>ProductoForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProductoForm.aspx.designer.cs">
+      <DependentUpon>ProductoForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registro.aspx.cs">

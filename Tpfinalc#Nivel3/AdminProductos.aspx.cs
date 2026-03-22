@@ -16,11 +16,14 @@ namespace Tpfinalc_Nivel3
             try
             {
                 if (!Seguridad.ValidarAdmin())
+                {
+                    Response.Redirect("~/Login.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
                     return;
+                }
 
                 if (!IsPostBack)
                 {
-                    // tu lógica normal
                     CargarMarcas();
                     CargarCategorias();
                     CargarGrilla();
@@ -28,20 +31,23 @@ namespace Tpfinalc_Nivel3
             }
             catch (Exception ex)
             {
-                Session["Error"] = ex.Message;
+                Session["Error"] = ex.ToString();
                 Response.Redirect("~/Error.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }
         }
 
-
         protected void btnBuscar_Click(object sender, EventArgs e)
         {
-            try { CargarGrilla(); }
+            try
+            {
+                CargarGrilla();
+            }
             catch (Exception ex)
             {
-                Session["Error"] = ex.Message;
-                Response.Redirect("../Error.aspx", false);
+                Session["Error"] = ex.ToString();
+                Response.Redirect("~/Error.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
         }
 
@@ -50,12 +56,18 @@ namespace Tpfinalc_Nivel3
             try
             {
                 ArticuloDAL dal = new ArticuloDAL();
-                gvArticulos.DataSource = dal.AdminListar(txtBuscar.Text, ddlMarca.SelectedValue, ddlCategoria.SelectedValue);
+
+                gvArticulos.DataSource = dal.AdminListar(
+                    txtBuscar.Text.Trim(),
+                    ddlMarca.SelectedValue,
+                    ddlCategoria.SelectedValue
+                );
+
                 gvArticulos.DataBind();
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al cargar grilla de productos.", ex);
+                throw new Exception("Error al cargar la grilla de productos.", ex);
             }
         }
 
@@ -63,17 +75,28 @@ namespace Tpfinalc_Nivel3
         {
             try
             {
+                int id = Convert.ToInt32(e.CommandArgument);
+
+                if (e.CommandName == "Editar")
+                {
+                    Response.Redirect("FormularioArticulo.aspx?id=" + id, false);
+                    Context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+
                 if (e.CommandName == "Eliminar")
                 {
-                    int id = int.Parse(e.CommandArgument.ToString());
-                    new ArticuloDAL().AdminEliminar(id);
+                    ArticuloDAL dal = new ArticuloDAL();
+                    dal.AdminEliminar(id);
+
                     CargarGrilla();
                 }
             }
             catch (Exception ex)
             {
-                Session["Error"] = ex.Message;
-                Response.Redirect("../Error.aspx", false);
+                Session["Error"] = ex.ToString();
+                Response.Redirect("~/Error.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
         }
 

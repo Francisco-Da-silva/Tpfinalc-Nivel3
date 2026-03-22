@@ -1,13 +1,7 @@
-﻿using coneccion;
-using conexion;
-using conexion.conexion;
+﻿using conexion.conexion;
 using Dominio;
-using Service;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -72,4 +66,5 @@ namespace Tpfinalc_Nivel3
         }
     }
 }
+
 
