@@ -2,18 +2,20 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2 class="mb-4">Catálogo de productos</h2>
+    <div class="page-title">
+        <h1>Catalogo de productos</h1>
+        <p>Busca, filtra y explora los articulos disponibles.</p>
+    </div>
 
     
 <%--         BÚSQUEDA + FILTROS --%>
     
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
+    <div class="panel-card filter-panel mb-4">
 
             <!-- BÚSQUEDA -->
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="m-0 text-uppercase text-muted">Búsqueda</h6>
+                    <h6 class="section-label m-0">Busqueda</h6>
                 </div>
 
                 <div class="row g-2 align-items-end">
@@ -46,18 +48,14 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Categoría</label>
+                        <label class="form-label">Categoria</label>
                         <asp:DropDownList ID="ddlCategoria" runat="server"
                             CssClass="form-select" />
                     </div>
                 </div>
 
-                <small class="text-muted d-block mt-2">
-                    * La búsqueda se combina con los filtros seleccionados.
-                </small>
+                <small class="text-muted d-block mt-2">La busqueda se combina con los filtros seleccionados.</small>
             </div>
-
-        </div>
     </div>
 
     <!-- MENSAJE SIN RESULTADOS -->
@@ -67,19 +65,19 @@
     </asp:Panel>
 
     <!-- CATÁLOGO -->
-    <div class="row">
+    <div class="row product-grid">
         <asp:Repeater ID="repArticulos" runat="server">
             <ItemTemplate>
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card product-card h-100">
 
-                        <img src='<%# Eval("ImagenUrl") %>'
-                             class="card-img-top"
-                             style="height:200px; object-fit:cover;" />
+                        <img src='<%# GetImagenProducto(Eval("ImagenUrl")) %>'
+                             class="card-img-top product-image"
+                             onerror="this.onerror=null;this.src='img/no-image.png';" />
 
                         <div class="card-body">
-                            <h5 class="card-title"><%# Eval("Nombre") %></h5>
-                            <p class="card-text fw-bold">$ <%# Eval("Precio") %></p>
+                            <h5 class="product-name"><%# Eval("Nombre") %></h5>
+                            <p class="product-price">$ <%# Eval("Precio") %></p>
                         </div>
                         <a href='Detalle.aspx?id=<%# Eval("Id") %>' class="stretched-link"></a>
 

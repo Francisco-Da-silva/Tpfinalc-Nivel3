@@ -1,9 +1,13 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AdminProductos.aspx.cs" Inherits="Tpfinalc_Nivel3.AdminProductos" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>Administración de Productos</h2>
+    <div class="page-title">
+        <h1>Administracion de productos</h1>
+        <p>Busca, edita y mantiene el catalogo.</p>
+    </div>
 
-    <div class="row mb-3">
+    <div class="panel-card filter-panel mb-3">
+    <div class="row g-2 align-items-end">
         <div class="col-md-4">
             <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control" Placeholder="Buscar..." />
         </div>
@@ -17,6 +21,7 @@
             <asp:Button ID="btnBuscar" runat="server" Text="Buscar" CssClass="btn btn-primary w-100" OnClick="btnBuscar_Click"/>
         </div>
     </div>
+    </div>
 
     <div class="mb-3">
         <a class="btn btn-success" href="AltaProducto.aspx">+ Nuevo producto</a>
@@ -24,7 +29,7 @@
 
     </div>
 
-    <asp:GridView ID="gvArticulos" runat="server" CssClass="table table-striped"
+    <asp:GridView ID="gvArticulos" runat="server" CssClass="table table-striped table-hover align-middle"
         AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvArticulos_RowCommand">
         <Columns>
             <asp:BoundField DataField="Codigo" HeaderText="Código" />

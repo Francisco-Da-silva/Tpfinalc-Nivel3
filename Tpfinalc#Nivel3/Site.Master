@@ -39,8 +39,9 @@
         </asp:ScriptManager>
             
 
- <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+ <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark app-navbar">
     <div class="container">
+        <a class="navbar-brand" runat="server" href="~/Home.aspx">Catalogo Web</a>
         
 
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
@@ -52,7 +53,7 @@
         <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item">
-                    <a class="nav-link" runat="server" href="~/Home.aspx">Home</a>
+                    <a class="nav-link" runat="server" href="~/Home.aspx">Catalogo</a>
                 </li>
 
                 <li class="nav-item" id="liRegistro" runat="server" visible="true">
@@ -63,28 +64,28 @@
 
                 <!-- SOLO ADMIN -->
                 <li class="nav-item" id="liAdminProductos" runat="server" visible="false">
-                    <a class="nav-link" runat="server" href="~/AdminProductos.aspx">Admin Productos</a>
+                    <a class="nav-link" runat="server" href="~/AdminProductos.aspx">Productos</a>
                 </li>
             </ul>
 
             <ul class="navbar-nav">
                 <!-- VISITANTE -->
                 <li class="nav-item" id="liLogin" runat="server" visible="true">
-                    <a class="nav-link" runat="server" href="~/Login.aspx">Login</a>
+                    <a class="nav-link" runat="server" href="~/Login.aspx">Ingresar</a>
+                </li>
+
+                <li class="nav-item" id="liFavoritos" runat="server" visible="false">
+                    <a class="nav-link" runat="server" href="~/Favoritos.aspx">Favoritos</a>
+                </li>
+
+                <li class="nav-item" id="liMiPerfil" runat="server" visible="false">
+                    <a class="nav-link" runat="server" href="~/Miperfil.aspx">Mi perfil</a>
                 </li>
 
                 <!-- LOGUEADO -->
                 <li class="nav-item" id="liLogout" runat="server" visible="false">
                     <a class="nav-link" runat="server" href="~/CerrarSeccion.aspx">Cerrar sesión</a>
                 </li>
-
-                <li class="nav-item">
-                 <a class="nav-link" href="Favoritos.aspx">Favoritos</a>
-                  </li>
-
-                 <li class="nav-item"   visible="false">
-                    <a class="nav-link" id="liMiPerfil" runat="server" href="~/Miperfil.aspx">MiPerfil</a>
-                 </li>
             </ul>
         </div>
     </div>
@@ -97,9 +98,8 @@
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
-            <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Mi aplicación ASP.NET</p>
+            <footer class="site-footer">
+                <p>&copy; <%: DateTime.Now.Year %> - Catalogo Web</p>
             </footer>
         </div>
     </form>

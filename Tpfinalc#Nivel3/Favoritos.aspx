@@ -1,24 +1,26 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Favoritos.aspx.cs" Inherits="Tpfinalc_Nivel3.Favoritos" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-<h2 class="mb-4">Mis Favoritos</h2>
+<div class="page-title">
+    <h1>Mis favoritos</h1>
+    <p>Productos guardados para volver a verlos rapido.</p>
+</div>
 
-<div class="row">
+<div class="row product-grid">
 
 <asp:Repeater ID="repFavoritos" runat="server">
 <ItemTemplate>
 
-    <div class="col-md-3 mb-4">
-        <div class="card h-100 shadow-sm">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card product-card h-100">
 
-            <div style="height:180px; overflow:hidden;">
-                <img src='<%# Eval("ImagenUrl") %>' 
-                     style="width:100%; height:100%; object-fit:cover;" />
-            </div>
+            <img src='<%# GetImagenProducto(Eval("ImagenUrl")) %>'
+                 class="product-image"
+                 onerror="this.onerror=null;this.src='img/no-image.png';" />
 
             <div class="card-body text-center">
-                <h6 class="card-title"><%# Eval("Nombre") %></h6>
-                <p class="card-text fw-bold">$ <%# Eval("Precio") %></p>
+                <h6 class="product-name"><%# Eval("Nombre") %></h6>
+                <p class="product-price">$ <%# Eval("Precio") %></p>
 
                 <asp:Button ID="btnQuitar" runat="server"
                     Text="Quitar"

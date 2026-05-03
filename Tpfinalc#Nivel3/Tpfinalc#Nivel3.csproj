@@ -211,6 +211,7 @@
     <Content Include="CerrarSeccion.aspx" />
     <Content Include="Favoritos.aspx" />
     <Content Include="Home.aspx" />
+    <Content Include="img\no-image.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />

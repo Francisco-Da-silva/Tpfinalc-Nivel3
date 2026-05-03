@@ -13,6 +13,13 @@ namespace Tpfinalc_Nivel3
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Usuario"] == null)
+            {
+                Response.Redirect("~/Login.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
             if (!IsPostBack)
                 CargarFavoritos();
         }
@@ -36,6 +43,12 @@ namespace Tpfinalc_Nivel3
             dal.Eliminar(usuario.Id, idArticulo);
 
             CargarFavoritos();
+        }
+
+        protected string GetImagenProducto(object imagenUrl)
+        {
+            string url = imagenUrl?.ToString();
+            return string.IsNullOrWhiteSpace(url) ? ResolveUrl("~/img/no-image.png") : url.Trim();
         }
     }
 }

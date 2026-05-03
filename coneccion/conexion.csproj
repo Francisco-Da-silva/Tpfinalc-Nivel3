@@ -48,6 +48,7 @@
     <Compile Include="Conexion.cs" />
     <Compile Include="FavoritoDAL.cs" />
     <Compile Include="MarcaDAL.cs" />
+    <Compile Include="PasswordHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Seguridad.cs" />
     <Compile Include="UsuarioDAL.cs" />

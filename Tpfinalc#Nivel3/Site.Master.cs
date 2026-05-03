@@ -25,6 +25,7 @@ namespace Tpfinalc_Nivel3
                 bool admin = logueado && user.Admin;
 
                 liMiPerfil.Visible = logueado;
+                liFavoritos.Visible = logueado;
                 liRegistro.Visible = !logueado;
 
                 liLogin.Visible = !logueado;

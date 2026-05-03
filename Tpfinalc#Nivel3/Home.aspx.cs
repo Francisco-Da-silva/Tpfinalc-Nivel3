@@ -98,6 +98,11 @@ namespace Tpfinalc_Nivel3
             ddlCategoria.Items.Insert(0, new ListItem("Todas", "0"));
         }
 
+        protected string GetImagenProducto(object imagenUrl)
+        {
+            string url = imagenUrl?.ToString();
+            return string.IsNullOrWhiteSpace(url) ? ResolveUrl("~/img/no-image.png") : url.Trim();
+        }
 
 
     }

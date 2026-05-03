@@ -46,7 +46,9 @@ namespace Tpfinalc_Nivel3
             ddlMarca.SelectedValue = art.IdMarca.ToString();
             ddlCategoria.SelectedValue = art.IdCategoria.ToString();
 
-            imgProducto.ImageUrl = art.ImagenUrl;
+            imgProducto.ImageUrl = string.IsNullOrWhiteSpace(art.ImagenUrl)
+                ? ResolveUrl("~/img/no-image.png")
+                : art.ImagenUrl.Trim();
         }
 
         protected void btnGuardar_Click(object sender, EventArgs e)
@@ -88,7 +90,9 @@ namespace Tpfinalc_Nivel3
 
         protected void txtImagenUrl_TextChanged(object sender, EventArgs e)
         {
-            imgProducto.ImageUrl = txtImagenUrl.Text;
+            imgProducto.ImageUrl = string.IsNullOrWhiteSpace(txtImagenUrl.Text)
+                ? ResolveUrl("~/img/no-image.png")
+                : txtImagenUrl.Text.Trim();
         }
 
         private void CargarMarcas()

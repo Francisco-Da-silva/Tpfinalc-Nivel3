@@ -1,17 +1,12 @@
-﻿using conexion;
+using conexion;
 using conexion.conexion;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Tpfinalc_Nivel3
 {
-    public partial class ResetPassword : System.Web.UI.Page
+    public partial class ResetPassword : Page
     {
-
         private string Token => Request.QueryString["token"];
 
         protected void Page_Load(object sender, EventArgs e)
@@ -31,7 +26,8 @@ namespace Tpfinalc_Nivel3
                     bool ok = dal.TokenValido(Token);
 
                     pnlForm.Visible = ok;
-                    if (!ok) lblMsg.Text = "El link es inválido o ya venció.";
+                    if (!ok)
+                        lblMsg.Text = "El link es inválido o ya venció.";
                 }
             }
             catch (Exception ex)
@@ -67,7 +63,8 @@ namespace Tpfinalc_Nivel3
                     return;
                 }
 
-                new UsuarioDAL().ConfirmarReset(Token, p1);
+                string passHash = PasswordHelper.HashPasswordSha256(p1);
+                new UsuarioDAL().ConfirmarReset(Token, passHash);
 
                 Response.Redirect("~/Login.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
@@ -79,6 +76,5 @@ namespace Tpfinalc_Nivel3
                 Context.ApplicationInstance.CompleteRequest();
             }
         }
-
     }
 }

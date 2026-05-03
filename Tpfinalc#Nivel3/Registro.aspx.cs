@@ -1,16 +1,12 @@
-﻿using conexion;
+using conexion;
 using conexion.conexion;
 using Dominio;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Tpfinalc_Nivel3
 {
-    public partial class Registro : System.Web.UI.Page
+    public partial class Registro : Page
     {
         protected void btnRegistrar_Click(object sender, EventArgs e)
         {
@@ -41,27 +37,24 @@ namespace Tpfinalc_Nivel3
                 Usuario nuevo = new Usuario
                 {
                     Email = email,
-                    Pass = pass,
+                    Pass = PasswordHelper.HashPasswordSha256(pass),
                     Nombre = (txtNombre.Text ?? "").Trim(),
                     Apellido = (txtApellido.Text ?? "").Trim(),
                     UrlImagenPerfil = (txtImg.Text ?? "").Trim(),
                     Admin = false
                 };
 
-                new UsuarioDAL().Registrar(nuevo);
+                UsuarioDAL dal = new UsuarioDAL();
+                dal.Registrar(nuevo);
 
-                // Opcional: loguearlo automáticamente
-                Session["Usuario"] = new UsuarioDAL().Login(email, pass);
+                Session["Usuario"] = dal.Login(email, nuevo.Pass);
 
                 Response.Redirect("~/Home.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }
             catch (Exception ex)
             {
-
                 lblMsg.Text = ex.Message;
-
-
             }
         }
     }

@@ -42,13 +42,13 @@ namespace Tpfinalc_Nivel3
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl liLogin;
 
         /// <summary>
-        /// Control liLogout.
+        /// Control liFavoritos.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liLogout;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liFavoritos;
 
         /// <summary>
         /// Control liMiPerfil.
@@ -57,7 +57,16 @@ namespace Tpfinalc_Nivel3
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor liMiPerfil;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liMiPerfil;
+
+        /// <summary>
+        /// Control liLogout.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liLogout;
 
         /// <summary>
         /// Control MainContent.

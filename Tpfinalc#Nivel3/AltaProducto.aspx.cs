@@ -72,7 +72,7 @@ namespace Tpfinalc_Nivel3
         try
         {
             imgPreview.Src = string.IsNullOrWhiteSpace(txtImagenUrl.Text)
-                ? "../img/no-image.png"
+                ? ResolveUrl("~/img/no-image.png")
                 : txtImagenUrl.Text.Trim();
         }
         catch (Exception ex)

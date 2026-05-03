@@ -49,7 +49,9 @@ namespace Tpfinalc_Nivel3
                 lblCodigo.Text = art.Codigo;
                 lblDescripcion.Text = art.Descripcion;
 
-                imgProducto.Src = art.ImagenUrl;
+                imgProducto.Src = string.IsNullOrWhiteSpace(art.ImagenUrl)
+                    ? ResolveUrl("~/img/no-image.png")
+                    : art.ImagenUrl.Trim();
 
                 lblMarca.Text = art.MarcaDescripcion;
                 lblCategoria.Text = art.CategoriaDescripcion;

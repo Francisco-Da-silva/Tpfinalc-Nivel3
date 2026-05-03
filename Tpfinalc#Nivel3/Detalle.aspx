@@ -3,28 +3,41 @@
 
     <asp:Panel ID="pnlDetalle" runat="server" Visible="false">
 
-        <div class="row">
+        <div class="row g-4 align-items-start">
 
             <div class="col-md-5">
                 <img id="imgProducto" runat="server"
-                     class="img-fluid rounded"
+                     class="detail-image"
                      src="img/no-image.png"
                      onerror="this.src='img/no-image.png'" />
             </div>
 
             <div class="col-md-7">
-                <h2><asp:Label ID="lblNombre" runat="server" /></h2>
-                <h4 class="text-success">$ <asp:Label ID="lblPrecio" runat="server" /></h4>
+                <div class="page-title">
+                    <h1><asp:Label ID="lblNombre" runat="server" /></h1>
+                    <p class="product-price">$ <asp:Label ID="lblPrecio" runat="server" /></p>
+                </div>
 
-                <p><strong>Código:</strong> <asp:Label ID="lblCodigo" runat="server" /></p>
-                <p><strong>Marca:</strong> <asp:Label ID="lblMarca" runat="server" /></p>
-                <p><strong>Categoría:</strong> <asp:Label ID="lblCategoria" runat="server" /></p>
+                <div class="detail-meta">
+                    <div class="detail-meta-item">
+                        <span>Codigo</span>
+                        <asp:Label ID="lblCodigo" runat="server" />
+                    </div>
+                    <div class="detail-meta-item">
+                        <span>Marca</span>
+                        <asp:Label ID="lblMarca" runat="server" />
+                    </div>
+                    <div class="detail-meta-item">
+                        <span>Categoria</span>
+                        <asp:Label ID="lblCategoria" runat="server" />
+                    </div>
+                </div>
 
                 <p class="mt-3">
                     <asp:Label ID="lblDescripcion" runat="server" />
                 </p>
 
-                <a href="Home.aspx" class="btn btn-secondary mt-3">Volver</a>
+                <a href="Home.aspx" class="btn btn-secondary mt-3">Volver al catalogo</a>
             </div>
 
         </div>
