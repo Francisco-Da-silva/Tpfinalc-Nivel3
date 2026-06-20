@@ -19,8 +19,13 @@ using System.Threading.Tasks;
                 try
                 {
                 using (SqlConnection con = new SqlConnection(Conexion.Cadena))
-                using (SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO FAVORITOS (IdUser, IdArticulo) VALUES (@u, @a)", con))
+                using (SqlCommand cmd = new SqlCommand(@"
+                        IF NOT EXISTS (
+                            SELECT 1 FROM FAVORITOS WHERE IdUser = @u AND IdArticulo = @a
+                        )
+                        BEGIN
+                            INSERT INTO FAVORITOS (IdUser, IdArticulo) VALUES (@u, @a)
+                        END", con))
                     {
                         cmd.Parameters.Add("@u", SqlDbType.Int).Value = idUser;
                         cmd.Parameters.Add("@a", SqlDbType.Int).Value = idArticulo;
@@ -32,6 +37,27 @@ using System.Threading.Tasks;
                 catch (Exception ex)
                 {
                     throw new Exception("Error en FavoritoDAL.Agregar", ex);
+                }
+            }
+
+            public bool Existe(int idUser, int idArticulo)
+            {
+                try
+                {
+                using (SqlConnection con = new SqlConnection(Conexion.Cadena))
+                using (SqlCommand cmd = new SqlCommand(
+                        "SELECT COUNT(1) FROM FAVORITOS WHERE IdUser=@u AND IdArticulo=@a", con))
+                    {
+                        cmd.Parameters.Add("@u", SqlDbType.Int).Value = idUser;
+                        cmd.Parameters.Add("@a", SqlDbType.Int).Value = idArticulo;
+
+                        con.Open();
+                        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error en FavoritoDAL.Existe", ex);
                 }
             }
 

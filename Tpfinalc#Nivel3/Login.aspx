@@ -26,7 +26,7 @@
                     OnClick="btnLogin_Click" />
 
                 <div class="mt-3 text-center">
-                    <a href="<%= ResolveUrl("~/RecuperarContraseña.aspx") %>">Olvide mi contrasena</a>
+                    <a href="<%= ResolveUrl("~/RecuperarContrasena.aspx") %>">Olvide mi contrasena</a>
                 </div>
             </div>
         </div>

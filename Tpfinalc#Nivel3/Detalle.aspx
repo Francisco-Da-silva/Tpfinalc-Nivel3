@@ -37,7 +37,16 @@
                     <asp:Label ID="lblDescripcion" runat="server" />
                 </p>
 
-                <a href="Home.aspx" class="btn btn-secondary mt-3">Volver al catalogo</a>
+                <div class="d-flex gap-2 mt-3 flex-wrap">
+                    <asp:Button ID="btnAgregarFavorito" runat="server"
+                        Text="Agregar a favoritos"
+                        CssClass="btn btn-primary"
+                        OnClick="btnAgregarFavorito_Click" />
+
+                    <a href="Home.aspx" class="btn btn-secondary">Volver al catalogo</a>
+                </div>
+
+                <asp:Label ID="lblFavoritoMsg" runat="server" CssClass="d-block mt-3"></asp:Label>
             </div>
 
         </div>

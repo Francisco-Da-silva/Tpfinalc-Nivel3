@@ -1,10 +1,7 @@
-﻿using Dominio;
+using Dominio;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Tpfinalc_Nivel3
 {
@@ -14,13 +11,12 @@ namespace Tpfinalc_Nivel3
         {
             try
             {
-                // Evita navbar "viejo" por cache
-                Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+                Response.Cache.SetCacheability(HttpCacheability.NoCache);
                 Response.Cache.SetNoStore();
                 Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
-                Response.Cache.SetRevalidation(System.Web.HttpCacheRevalidation.AllCaches);
+                Response.Cache.SetRevalidation(HttpCacheRevalidation.AllCaches);
 
-                var user = Session["Usuario"] as Dominio.Usuario;
+                var user = Session["Usuario"] as Usuario;
                 bool logueado = user != null;
                 bool admin = logueado && user.Admin;
 

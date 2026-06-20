@@ -17,7 +17,7 @@ namespace Tpfinalc_Nivel3
 
         private void RedirigirARecuperacionPorMail()
         {
-            Response.Redirect("~/RecuperarContraseña.aspx", false);
+            Response.Redirect("~/RecuperarContrasena.aspx", false);
             Context.ApplicationInstance.CompleteRequest();
         }
     }

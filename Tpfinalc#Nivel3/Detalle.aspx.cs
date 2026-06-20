@@ -11,6 +11,15 @@ namespace Tpfinalc_Nivel3
 {
     public partial class Detalle : System.Web.UI.Page
     {
+        private int IdArticulo
+        {
+            get
+            {
+                int.TryParse(Request.QueryString["id"], out int id);
+                return id;
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -56,10 +65,61 @@ namespace Tpfinalc_Nivel3
                 lblMarca.Text = art.MarcaDescripcion;
                 lblCategoria.Text = art.CategoriaDescripcion;
 
+                ConfigurarFavorito(id);
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al cargar el detalle del producto.", ex);
+            }
+        }
+
+        private void ConfigurarFavorito(int idArticulo)
+        {
+            Usuario user = Session["Usuario"] as Usuario;
+            bool logueado = user != null;
+
+            btnAgregarFavorito.Visible = logueado;
+            lblFavoritoMsg.Text = logueado
+                ? ""
+                : "Inicia sesion para agregar este producto a favoritos.";
+            lblFavoritoMsg.CssClass = logueado ? "d-block mt-3" : "d-block mt-3 text-muted";
+
+            if (!logueado)
+                return;
+
+            bool yaEsFavorito = new FavoritoDAL().Existe(user.Id, idArticulo);
+            btnAgregarFavorito.Enabled = !yaEsFavorito;
+            btnAgregarFavorito.Text = yaEsFavorito ? "Ya esta en favoritos" : "Agregar a favoritos";
+        }
+
+        protected void btnAgregarFavorito_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Usuario user = Session["Usuario"] as Usuario;
+                if (user == null)
+                {
+                    Response.Redirect("~/Login.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+
+                if (IdArticulo <= 0)
+                    throw new Exception("Producto no especificado.");
+
+                FavoritoDAL dal = new FavoritoDAL();
+                dal.Agregar(user.Id, IdArticulo);
+
+                btnAgregarFavorito.Enabled = false;
+                btnAgregarFavorito.Text = "Ya esta en favoritos";
+                lblFavoritoMsg.CssClass = "d-block mt-3 text-success";
+                lblFavoritoMsg.Text = "Producto agregado a tus favoritos.";
+            }
+            catch (Exception ex)
+            {
+                Session["Error"] = ex.Message;
+                Response.Redirect("~/Error.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
         }
 
